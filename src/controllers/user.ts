@@ -29,6 +29,8 @@ const mobileLoginUser = TryCatch(
         const { countryCode, mobile_number, role } = req.body;
         // console.log("mobile_number: ", mobile_number );
         if (!mobile_number ) return next(new ErrorHandler("Please send mobile number", 400));
+        if (!countryCode ) return next(new ErrorHandler("Please give country code", 400));
+        if (!role ) return next(new ErrorHandler("Please choose role", 400));
     
         let user:any = await User.find({mobile_number});
         // console.log("user: ", user);
@@ -85,9 +87,12 @@ const verifyMobileOtp = TryCatch(
         res: Response,
         next: NextFunction
     ) => {
-        const userInputOtp = req.body;
-        // console.log("userInputOtp: ", userInputOtp);
+        
         const { countryCode, mobile_number, otp } = req.body;
+
+        if (!mobile_number ) return next(new ErrorHandler("Please send mobile number", 400));
+        if (!countryCode ) return next(new ErrorHandler("Please give country code", 400));
+        if (!otp || otp.length !== 6 ) return next(new ErrorHandler("Please give 6 digit OTP", 400));
 
         client.verify.v2.services(serviceID) 
         .verificationChecks.create({
