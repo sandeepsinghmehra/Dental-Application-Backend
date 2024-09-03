@@ -1,8 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 
 export interface NewUserMobileRequestBody {
-    mobile_number: string;
-    _id: string;
+  _id: string;
+  countryCode: string;
+  mobile_number: string;
+  role: string;
 }
 export interface NewUserRequestBody {
   name: string;

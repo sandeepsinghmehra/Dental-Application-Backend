@@ -143,7 +143,11 @@ const UserSchema: Schema = new Schema({
         role: {
             type: String,
             enum: ["admin", "doctor", "patient"],
-            default: "patient",
+            required: [true, "Please enter role"],
+        },
+        countryCode: {
+            type: String,
+            required: [true, "Country Code is required"],
         },
         profile: {
             firstName: String,
@@ -156,6 +160,7 @@ const UserSchema: Schema = new Schema({
                 lowercase: true,
                 match: [/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, 'Please use a valid address'],
                 unique:true,
+                sparse: true  // This allows multiple null values
             },
             gender: {
                 type: String,
