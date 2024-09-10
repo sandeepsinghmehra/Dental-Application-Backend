@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { NewUserMobileRequestBody, NewUserRequestBody } from "../types/types";
+import { NewUserMobileRequestBody } from "../types/types";
 import { User } from "../models/user";
 import { TryCatch } from "../middlewares/error";
 import ErrorHandler from "../utils/utility";
@@ -12,7 +12,6 @@ const env = process.env.NODE_ENV || 'development';
 dotenv.config({ path: `.env.${env}` });
 
 
-const otpStore = {};
 const accountSid =  process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const serviceID:any = process.env.TWILIO_SERVICE_ID;
@@ -27,9 +26,11 @@ const mobileLoginUser = TryCatch(
         res: Response,
         next: NextFunction
     ) => {
-        const { mobile_number } = req.body;
+        const { countryCode, mobile_number, role } = req.body;
         // console.log("mobile_number: ", mobile_number );
         if (!mobile_number ) return next(new ErrorHandler("Please send mobile number", 400));
+        if (!countryCode ) return next(new ErrorHandler("Please give country code", 400));
+        if (!role ) return next(new ErrorHandler("Please choose role", 400));
     
         let user:any = await User.find({mobile_number});
         // console.log("user: ", user);
@@ -37,7 +38,7 @@ const mobileLoginUser = TryCatch(
             // console.log("if called")
             client.verify.v2.services(serviceID)
                 .verifications
-                .create({to: mobile_number, channel: 'sms'})
+                .create({to: `+${countryCode}${mobile_number}`, channel: 'sms'})
                 .then((verification: any) => {
                     console.log(verification.sid);
                     return res.status(200).json({
@@ -49,19 +50,21 @@ const mobileLoginUser = TryCatch(
                     return res.status(400).json({
                         success: false,
                         message: `Invalid mobile number`,
+                        details: error
                     })
                 }) 
         } else {
-       
-            user = await User.create({
-                mobile_number
-            });
             // console.log("user created: ", `OTP send successfully on this number ${user.mobile_number}`, user);
             client.verify.v2.services(serviceID)
                 .verifications
-                .create({to: mobile_number, channel: 'sms'})
-                .then((verification: any) => {
+                .create({to: `+${countryCode}${mobile_number}`, channel: 'sms'})
+                .then(async(verification: any) => {
                     console.log(verification.sid);
+                    user = await User.create({
+                        mobile_number,
+                        role,
+                        countryCode
+                    });
                     return res.status(201).json({
                         success: true,
                         message: `OTP send successfully on this number ${user.mobile_number}`,
@@ -71,6 +74,7 @@ const mobileLoginUser = TryCatch(
                     return res.status(400).json({
                         success: false,
                         message: `Invalid mobile number`,
+                        details: error
                     })
                 })
         }
@@ -83,13 +87,16 @@ const verifyMobileOtp = TryCatch(
         res: Response,
         next: NextFunction
     ) => {
-        const userInputOtp = req.body;
-        // console.log("userInputOtp: ", userInputOtp);
-        const { mobile_number, otp } = req.body;
+        
+        const { countryCode, mobile_number, otp } = req.body;
+
+        if (!mobile_number ) return next(new ErrorHandler("Please send mobile number", 400));
+        if (!countryCode ) return next(new ErrorHandler("Please give country code", 400));
+        if (!otp || otp.length !== 6 ) return next(new ErrorHandler("Please give 6 digit OTP", 400));
 
         client.verify.v2.services(serviceID) 
         .verificationChecks.create({
-          to: `${mobile_number}`,
+          to: `+${countryCode}${mobile_number}`,
           code: otp,
         })
         .then(async (data) => {
@@ -108,6 +115,7 @@ const verifyMobileOtp = TryCatch(
             return res.status(400).json({
                 success: false,
                 message: `User is not Verified!!`,
+                details: error
             })
         });
     }
