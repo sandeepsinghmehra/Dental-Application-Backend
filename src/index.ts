@@ -1,25 +1,22 @@
-import dotenv from 'dotenv';
-import express from 'express';
+import express, { Application } from 'express';
 import cors from 'cors';
 import cookieParser from "cookie-parser";
 
-import connectDB from './database/connection';
 
 // Importing Routes
 import userRoute from "./routes/user";
 import { errorMiddleware } from './middlewares/error';
+import helmet from 'helmet';
+import rateLimit from './middlewares/rateLimit';
 
-// Load environment variables based on the environment
-const env = process.env.NODE_ENV || 'development';
-dotenv.config({ path: `.env.${env}` });
 
-const app = express();
-const PORT = process.env.PORT || 8099;
-const dbUri: string | undefined = process.env.MONGO_URI;
+const app: Application = express();
+// const PORT = process.env.PORT || 8099;
+// const dbUri: string | undefined = process.env.MONGO_URI;
 
-// Connect to MongoDB
-connectDB(dbUri);
 
+//Middleware
+app.use(helmet());
 // Enable CORS
 app.use(cors());
 // You can also configure CORS with options if needed
@@ -38,7 +35,7 @@ app.use(express.json());
 
 app.use(cookieParser()); // for accessing req.cookie in the auth middleware
 
-app.get('/', (req, res) => {
+app.get('/', rateLimit, (req, res) => {
     res.send('API is running...');
 });
 
@@ -46,8 +43,12 @@ app.get('/', (req, res) => {
 app.use("/api/v1/user", userRoute);
 
 app.use("/uploads", express.static("uploads"));
+
 app.use(errorMiddleware);
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+// app.listen(PORT, () => {
+//     console.log(`Server is running on port ${PORT}`);
+// });
+
+
+export default app
