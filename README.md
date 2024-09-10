@@ -39,6 +39,12 @@
 ## Add Gitignore file
 -- touch .gitignore
 
+## Add express-validator
+## Add helmet 
+-- Helmet helps secure Express apps by setting HTTP response headers.
+
+## add rate-limiter-flexible
+-- rate-limiter-flexible counts and limits the number of actions by key and protects from DDoS and brute force attacks at any scale. It works with Redis, Prisma, DynamoDB, process Memory, Cluster or PM2, Memcached, MongoDB, MySQL, and PostgreSQL.
 
 ## IMP links
 jwt.io

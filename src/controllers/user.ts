@@ -122,7 +122,9 @@ const verifyMobileOtp = TryCatch(
 )
 
 const getMyProfile = TryCatch(async (req:any, res) => {
+    // httpResponse(req, res, 200, responseMessage.SUCCESS, healthData)
 
+    // httpError(next, err, req, 500)
     return res.status(200).json({
         success: true,
         data: req.user,
