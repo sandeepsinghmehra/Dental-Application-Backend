@@ -25,4 +25,12 @@ export default {
     CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
     CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
     CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
+
+    // Paypal Payment
+    PAYPAL_BASE_URL: process.env.PAYPAL_BASE_URL,
+    PAYPAL_CLIENT_ID: process.env.PAYPAL_CLIENT_ID,
+    PAYPAL_CLIENT_SECRET: process.env.PAYPAL_CLIENT_SECRET,
+
+    // Nativ App base url
+    APP_CLIENT_URL: process.env.APP_CLIENT_URL,
 }
