@@ -65,8 +65,12 @@ const createOrder = async (amount:any, currency:any, token: any) => {
                 },
             ],
             application_context: {
-                return_url: config.APP_CLIENT_URL + '/success',
-                cancel_url: config.APP_CLIENT_URL + '/cancel',
+                // return_url: 'myapp://success',
+                // cancel_url: 'myapp://cancel',
+                // return_url: config.APP_CLIENT_URL + '/success',
+                // cancel_url: config.APP_CLIENT_URL + '/cancel',
+                return_url: `http://192.168.39.230:8099` + '/api/v1/user/paypal-success',
+                cancel_url: `http://192.168.39.230:8099` + '/api/v1/user/paypal-cancel',
                 // shipping_preference: 'NO_SHIPPING',
                 // user_action: 'PAY_NOW',
                 // brand_name: 'MyErApp.com'

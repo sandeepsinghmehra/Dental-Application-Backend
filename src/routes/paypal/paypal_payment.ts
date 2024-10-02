@@ -42,5 +42,15 @@ app.post('/capture-order', async (req, res) => {
     }
 });
 
+// Success route
+app.get('/paypal-success', (req, res) => {
+    const token = req.query.token;
+    res.redirect(`dntapp://success?token=${token}`);
+});
+  
+  // Cancel route
+app.get('/paypal-cancel', (req, res) => {
+    res.redirect('dntapp://cancel');
+});
 
 export default app;
