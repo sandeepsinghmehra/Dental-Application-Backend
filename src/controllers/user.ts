@@ -10,6 +10,8 @@ import httpResponse from "../utils/httpResponse";
 import responseMessage from "../constants/responseMessage";
 import config from "../config/config";
 import { generateOTP } from "../utils/otp";
+import { uploadFilesToCloudinary } from "../utils/cloudinaryFeature";
+import { Express } from 'express';
 
 // const textflow = require("textflow.js");
 
@@ -190,7 +192,67 @@ const verifyMobileOtp = TryCatch(
         //     })
         // });
     }
-)
+);
+
+// Create a new user & save it to the db & save in cookie token
+const newUserRegister = TryCatch(
+    async(
+        req: Request<{}, {}, any>,
+        res: Response,
+        next: NextFunction
+    ) => {
+        console.log("req.body: ", req.body);
+    const { firstName, middleName, lastName, gender, dob, bio, email, mobile_number, countryCode, role, street1, city, state, country, zip} = req.body;
+    
+    const file: Express.Multer.File | undefined = req.file;
+
+    if(!file) return next(new ErrorHandler("Please Upload Avatar", 400));
+
+    const result = await uploadFilesToCloudinary([file]);
+
+    const avatar = {
+        public_id: result[0]?.public_id,
+        url: result[0]?.url,
+    }
+    console.log("avatar info: ", avatar);
+    
+    let user;
+    let updateData = {
+        firstName: firstName,
+        middleName: middleName,
+        lastName: lastName,
+        avatar: avatar,
+        bio: bio,
+        gender: gender,
+        address: {
+            street1: street1,
+            // street2: street2,
+            city: city, state: state, country: country, zip: zip
+        }
+    }
+    if(role === "doctor"){
+        user = await User.create({
+            dob,
+            email,
+            mobile_number,
+            role,
+            countryCode,
+            status: 'pending',
+            profile: updateData
+        }); 
+    } else {
+        user = await User.create({
+            dob,
+            email,
+            mobile_number,
+            role,
+            countryCode,
+            status: 'patient_approved',
+            profile: updateData
+        }) 
+    }
+    sendToken(res, user, 201, "User created successfully");
+});
 
 const getPatientMyProfile = TryCatch(async (req:any, res, next) => {
     const user:any = await User.findById({ _id: req.userId });
@@ -250,6 +312,7 @@ const getDoctorMyProfile = TryCatch(async (req:any, res, next) => {
 export {
     mobileLoginUser, 
     verifyMobileOtp, 
+    newUserRegister,
     getPatientMyProfile, 
     getDoctorMyProfile,
     patchPatientProfile,

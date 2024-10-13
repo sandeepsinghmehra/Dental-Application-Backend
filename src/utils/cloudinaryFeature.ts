@@ -2,8 +2,7 @@ import {v2 as cloudinary} from "cloudinary";
 import { v4 as uuid } from "uuid";
 import getBase64 from "../lib/helper";
 
-
-const uploadFilesToCloudinary = async (files=[]) => {
+export async function uploadFilesToCloudinary(files: Express.Multer.File[]): Promise<{ public_id: string, url: string }[]> {
     // Upload files to Cloudinary
     const uploadPromises = files.map(async (file) => {
         // Wait for getBase64 to resolve before creating the Promise

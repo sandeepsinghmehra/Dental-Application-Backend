@@ -85,13 +85,16 @@ interface IProfile {
     firstName: String,
     middleName: String,
     lastName: String,
-    avatar: String,
+    avatar: {
+        public_id: String,
+        url: String,
+    },
     bio: String,
     gender: "male" | "female" | "other";
     dob: Date; // Assuming dob is of type Date
     address: {
         street1: String,
-        street2: String,
+        street2?: String,
         city: String,
         state: String,
         country: String,
@@ -114,6 +117,8 @@ export interface IUser extends Document {
     email: string,
     password?: string,
     otp?: string;
+    verify_mobile_number?: boolean;
+    verify_email_address?: boolean;
     profile: IProfile;
     createdAt: Date;
     updatedAt: Date;
@@ -132,6 +137,14 @@ const UserSchema: Schema = new Schema({
             type: String,
             enum: ["admin", "doctor", "patient", "manager"],
             required: [true, "Please enter role"],
+        },
+        verify_mobile_number: {
+            type: Boolean,
+            default: false,
+        },
+        verify_email_address: {
+            type: Boolean,
+            default: false,
         },
         status: {
             type: String,
@@ -163,7 +176,16 @@ const UserSchema: Schema = new Schema({
             firstName: String,
             middleName: String,
             lastName: String,
-            avatar: String,
+            avatar: {
+                public_id: {
+                    type: String,
+                    required: true,
+                },
+                url: {
+                    type: String,
+                    required: true,
+                },
+            },
             bio: String,
             gender: {
                 type: String,
@@ -188,7 +210,7 @@ const UserSchema: Schema = new Schema({
         },
         active: { type: Boolean, default: true },
         createdOtpAt: { type: Date, default: Date.now },
-        expiresOtpAt: { type: Date, required: true },
+        expiresOtpAt: { type: Date, required: false },
     }, 
     {
         timestamps: true,

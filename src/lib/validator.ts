@@ -9,6 +9,21 @@ const validateHandler = (req:any, res:any, next:any) => {
     if(errors.isEmpty()) return next();
     else next(new ErrorHandler(errorMessages, 400));
 }
+const registerValidator = () => [
+    body("firstName", "Please Enter First Name").notEmpty(),
+    body("bio", "Please Enter Bio").notEmpty(),
+    body("gender", "Please Enter Gender").notEmpty(),
+    body("dob", "Please Enter Dob").notEmpty(),
+    body("email", "Please Enter Email").notEmpty(),
+    body("mobile_number", "Please Enter Mobile Number").notEmpty(),
+    body("countryCode", "Please Enter Country Code").notEmpty(),
+    body("role", "Please Enter Role").notEmpty(),
+    body("street1", "Please Enter Street1").notEmpty(),
+    body("city", "Please Enter City").notEmpty(),
+    body("state", "Please Enter State").notEmpty(),
+    body("country", "Please Enter Country").notEmpty(),
+    body("zip", "Please Enter Zip code").notEmpty(),
+];
 const loginValidator = () => [
     body("mobile_number", "Please Enter Mobile Number").notEmpty(),
     body("countryCode", "Please Enter Country Code").notEmpty(),
@@ -25,4 +40,5 @@ export {
     validateHandler, 
     loginValidator,
     verifyOTPValidator, 
+    registerValidator,
 };
