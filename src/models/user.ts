@@ -85,9 +85,9 @@ interface IProfile {
     firstName: String,
     middleName: String,
     lastName: String,
-    avatar: {
-        public_id: String,
-        url: String,
+    avatar?: {
+        public_id?: String,
+        url?: String,
     },
     bio: String,
     gender: "male" | "female" | "other";
@@ -179,11 +179,11 @@ const UserSchema: Schema = new Schema({
             avatar: {
                 public_id: {
                     type: String,
-                    required: true,
+                    required: false,
                 },
                 url: {
                     type: String,
-                    required: true,
+                    required: false,
                 },
             },
             bio: String,
