@@ -64,23 +64,7 @@ import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import { model, Schema, Model, Document } from 'mongoose';
 
-//declare point type
-export interface IPoint extends Document {
-    type:string;
-    coordinates:string;
-}
-//generate point schema
-const Point:Schema= new Schema({
-    type: {
-        type: String,
-        enum: ['Point'],
-        required: true
-    },
-    coordinates: {
-        type: [Number],
-        required: true
-    }
-});
+
 interface IProfile {
     firstName: String,
     middleName: String,
@@ -99,9 +83,11 @@ interface IProfile {
         state: String,
         country: String,
         zip: String,
-        location: {
-            type: IPoint,
-            required: false
+        location?: {
+            coordinates?: {
+                latitude: Number,
+                longitude: Number,
+            },
         }
     },
     age: number; //   Virtual Attribute
@@ -203,8 +189,10 @@ const UserSchema: Schema = new Schema({
                 country: String,
                 zip: String,
                 location: {
-                    type: Point,
-                    required: false
+                    coordinates: {
+                        latitude: Number,
+                        longitude: Number,
+                    },
                 }
             },
         },

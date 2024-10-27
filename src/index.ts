@@ -9,6 +9,7 @@ import rateLimit from './middlewares/rateLimit';
 // Importing Routes
 import userRoute from "./routes/user";
 import adminRoute from "./routes/admin";
+import patientRoute from "./routes/patient/patient";
 import paypalPaymentRoute from "./routes/paypal/paypal_payment";
 import config from './config/config';
 
@@ -49,6 +50,8 @@ app.use("/api/v1/user", userRoute);
 
 // Using Admin Routes
 app.use("/api/v1/user", adminRoute);
+
+app.use("/api/v1/user", patientRoute);
 
 app.use("/api/v1/user", paypalPaymentRoute);
 
